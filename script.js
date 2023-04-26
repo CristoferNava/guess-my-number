@@ -1,48 +1,64 @@
-// 1) First generate the number between 1 and 20
-// 2) Check for the user input
-//     if user input is correct:
-//       Show a message saying that won the game
-//       Check for the higher score and set the value if is higher
-//     else:
-//       Decrease the score value
-// 3) If the user clicks again, reset the game
+"use strict";
+
+// Global variables
 let secretNumber = Math.floor(Math.random() * 20) + 1;
 let highScore = 0;
+let score = 20;
 
+// DOM elements
+const bodyElement = document.querySelector("body");
+const questionMarkElement = document.querySelector(".question-mark");
+const guessElement = document.querySelector(".guess");
+const messageElement = document.querySelector(".message");
+const scoreElement = document.querySelector(".score");
+const highScoreElement = document.querySelector(".highscore");
+
+// Buttons
+const btnCheck = document.querySelector(".btn--check");
+btnCheck.addEventListener("click", play);
+const btnAgain = document.querySelector(".again");
+btnAgain.addEventListener("click", reset);
+
+// Gameplay functions
 function play() {
-  let userNumber = Number(document.querySelector(".guess").value);
+  const userNumber = Number(guessElement.value);
+
+  // Bad input
   if (userNumber === 0) {
     alert("Plase write a number to play!");
     return;
   }
-  let score = Number(document.querySelector(".score").textContent);
+
+  // Correct number
   if (userNumber === secretNumber) {
-    document.querySelector(".message").textContent = "🎉 Correct Number!";
-    document.querySelector(".question-mark").textContent = String(secretNumber);
+    bodyElement.style.backgroundColor = "#60b347";
+    questionMarkElement.textContent = secretNumber;
+    questionMarkElement.style.padding = "4rem 8rem";
+    messageElement.textContent = "🎉 Correct Number!";
     if (score > highScore) {
       highScore = score;
-      document.querySelector(".highscore").textContent = String(highScore);
+      highScoreElement.textContent = highScore;
     }
-  } else {
-    document.querySelector(".score").textContent = String(score - 1);
-    if (userNumber < secretNumber) {
-      document.querySelector(".message").textContent = "📉 too low";
-    } else {
-      document.querySelector(".message").textContent = "📈 too high";
-    }
+    return;
   }
+  // Incorrect number
+  if (score === 0) {
+    messageElement.textContent = "💥 You lost the game!";
+    return;
+  }
+  score--;
+  scoreElement.textContent = score;
+  messageElement.textContent =
+    userNumber < secretNumber ? "📉 too low" : "📈 too high";
 }
 
 function reset() {
   secretNumber = Math.floor(Math.random() * 20) + 1;
-  document.querySelector(".guess").value = "";
-  document.querySelector(".question-mark").textContent = "?";
-  document.querySelector(".message").textContent = "Start guessing...";
-  document.querySelector(".score").textContent = "20";
+  score = 20;
+  bodyElement.style.backgroundColor = "#222";
+  questionMarkElement.textContent = "?";
+  questionMarkElement.style.padding = "4rem 5rem";
+  guessElement.value = "";
+  messageElement.textContent = "Start guessing...";
+  scoreElement.textContent = "20";
 }
-
-const btnCheck = document.querySelector(".btn--check");
-btnCheck.addEventListener("click", play);
-
-const btnAgain = document.querySelector(".again");
-btnAgain.addEventListener("click", reset);
